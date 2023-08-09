@@ -4,7 +4,7 @@ import settings
 import redis
 from tinkoff.invest.schemas import Bond, Currency, Etf, Future, Share
 
-R = redis.Redis.from_url(settings.get('TCS_STOCKS_URL'))
+R = redis.Redis.from_url(settings.get('TCS_ASSETS_URL'))
 
 
 class TCSAssetRepo:
