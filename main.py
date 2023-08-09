@@ -6,6 +6,11 @@ from repo import TCSAssetRepo
 from tinkoff.invest.utils import quotation_to_decimal
 import redis.asyncio as redis
 import os
+import logging
+
+logging.basicConfig(
+    format="%(asctime)s %(levelname)s:%(message)s", level=logging.DEBUG
+)
 
 
 def parse_tcs_trade(trades: OrderTrades) -> str:
@@ -15,9 +20,9 @@ def parse_tcs_trade(trades: OrderTrades) -> str:
     total_price = 0
     for trade in trades.trades:
         quantity += trade.quantity
-        total_price += quotation_to_decimal(trade.price)
+        total_price += quotation_to_decimal(trade.price) * trade.quantity
     if quantity == 0:
-        return 'Empty order report received'
+        return f'Empty order report received: {trades}'
     exec_price = float(total_price / quantity)
     direction = (
         'SOLD'
@@ -33,9 +38,9 @@ async def main():
     while True:
         async with r as client:
             _, trades = await client.brpop('tcs_trades')
-            await send_message(
-                'trade reporter', parse_tcs_trade(loads(trades))
-            )
+            trade_report = parse_tcs_trade(loads(trades))
+            logging.info(f'trade report received: {trade_report}')
+            await send_message('trade reporter', trade_report)
 
 
 if __name__ == '__main__':
