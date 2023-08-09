@@ -1,13 +1,10 @@
-import os
 from pickle import loads
-from typing import Union
+import settings
 
 import redis
-from dotenv import load_dotenv
 from tinkoff.invest.schemas import Bond, Currency, Etf, Future, Share
 
-load_dotenv()
-R = redis.Redis.from_url(os.getenv('REDIS_URL'))
+R = redis.Redis.from_url(settings.get('TCS_STOCKS_URL'))
 
 
 class TCSAssetRepo:

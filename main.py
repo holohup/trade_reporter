@@ -5,8 +5,8 @@ from pickle import loads
 from repo import TCSAssetRepo
 from tinkoff.invest.utils import quotation_to_decimal
 import redis.asyncio as redis
-import os
 import logging
+import settings
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)s:%(message)s", level=logging.DEBUG
@@ -35,7 +35,7 @@ def parse_tcs_trade(trades: OrderTrades) -> str:
 
 async def main():
     await send_message('trade reporter', 'Reporter operational')
-    r = redis.from_url(os.getenv('REDIS_TRADES_URL'))
+    r = redis.from_url(settings.get('TRADES_URL'))
     while True:
         async with r as client:
             _, trades = await client.brpop('tcs_trades')
