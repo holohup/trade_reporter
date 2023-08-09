@@ -34,6 +34,7 @@ def parse_tcs_trade(trades: OrderTrades) -> str:
 
 
 async def main():
+    await send_message('trade reporter', 'Reporter operational')
     r = redis.from_url(os.getenv('REDIS_TRADES_URL'))
     while True:
         async with r as client:
